@@ -17,6 +17,10 @@ export default class MyDocument extends Document {
       <html lang="en">
         <Head>
           <meta name="theme-color" content={theme.palette.primary.main} />
+          <meta name="mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="apple-touch-icon" content="/images/app-icon.png" />
+          <link rel="manifest" href="/manifest.json" />
           <link
             href="https://fonts.googleapis.com/css?family=Teko&display=swap&text=Spaceview"
             rel="stylesheet"
@@ -35,7 +39,7 @@ export default class MyDocument extends Document {
   }
 }
 
-MyDocument.getInitialProps = async (ctx) => {
+MyDocument.getInitialProps = async ctx => {
   // Resolution order
   //
   // On the server:
@@ -64,7 +68,7 @@ MyDocument.getInitialProps = async (ctx) => {
 
   ctx.renderPage = () =>
     originalRenderPage({
-      enhanceApp: (App) => (props) => sheets.collect(<App {...props} />),
+      enhanceApp: App => props => sheets.collect(<App {...props} />),
     });
 
   const initialProps = await Document.getInitialProps(ctx);

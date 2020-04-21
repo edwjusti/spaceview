@@ -1,0 +1,21 @@
+{
+	"name": "Spaceview",
+	"short_name": "Spaceview",
+	"theme_color": "#00ff00",
+	"background_color": "#00ff00",
+	"display": "standalone",
+	"start_url": "/",
+	"icons": [
+		{
+			"src": "/images/app-icon.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		},
+		{
+			"src": "/images/app-icon-maskable.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "maskable"
+		}
+	]
+}

@@ -19,9 +19,10 @@ import { dateFormatter, numberFormatter } from '../../src/util';
 import LinkWrapper from '../../src/components/LinkWrapper';
 import Error from 'next/error';
 import Head from 'next/head';
+import { GetStaticProps } from 'next';
 
 const marsPhotos = new MarsPhotos();
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   '@global': {
     a: {
       textDecoration: 'none !important',
@@ -83,7 +84,7 @@ const Home: NextPage<RoverList> = ({ rovers = [], error = false }) => {
         color="inherit">
         Missions
       </Grid>
-      {rovers.map((rover) => (
+      {rovers.map(rover => (
         <Grid
           key={rover.id}
           component={LinkWrapper}
@@ -136,12 +137,8 @@ const Home: NextPage<RoverList> = ({ rovers = [], error = false }) => {
   );
 };
 
-Home.getInitialProps = async ({ res }) => {
-  const resource = await marsPhotos.rovers();
-
-  if (resource.error && res) res.statusCode = 500;
-
-  return resource;
-};
+export const getStaticProps: GetStaticProps<RoverList> = async () => ({
+  props: await marsPhotos.rovers(),
+});
 
 export default Home;

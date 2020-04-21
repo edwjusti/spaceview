@@ -40,7 +40,7 @@ interface ResponseProps {
 }
 
 const Epic: NextPage<Photos & ResponseProps> = ({
-  photos,
+  photos = [],
   error,
   statusCode = 500,
 }) => {
@@ -53,11 +53,11 @@ const Epic: NextPage<Photos & ResponseProps> = ({
   ).toLowerCase();
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setActiveStep(prevActiveStep => prevActiveStep + 1);
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    setActiveStep(prevActiveStep => prevActiveStep - 1);
   };
 
   const handleStepChange = (step: number) => {
@@ -108,7 +108,7 @@ const Epic: NextPage<Photos & ResponseProps> = ({
         index={activeStep}
         onChangeIndex={handleStepChange}
         enableMouseEvents>
-        {photos.map((metadata) => (
+        {photos.map(metadata => (
           <img
             className={classes.img}
             key={metadata.identifier}
@@ -146,8 +146,10 @@ Epic.getInitialProps = async ({ query, res }) => {
   const colorKey = (query.color as string)?.toUpperCase();
   const color: Color = Color[colorKey || 'NATURAL'];
 
+  res?.setHeader('Cache-Control', 's-maxage=86400');
+
   if (!color) {
-    res.statusCode = 404;
+    if (res) res.statusCode = 404;
 
     return { error: true, statusCode: 404 };
   }

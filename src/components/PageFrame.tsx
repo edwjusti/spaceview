@@ -9,7 +9,7 @@ import {
 import LinkWrapper from './LinkWrapper';
 import { Router } from 'next/router';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   title: {
     fontFamily: 'Teko',
     fontWeight: 'bold',

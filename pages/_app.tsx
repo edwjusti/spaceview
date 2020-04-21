@@ -21,6 +21,15 @@ export default class MyApp extends App {
       <React.Fragment>
         <Head>
           <title>Spaceview</title>
+          <meta name="description" content="Explore images from space." />
+          <meta property="og:title" content="Spaceview" />
+          <meta name="og:description" content="Explore images from space." />
+          <meta name="og:url" content="https://spaceview.now.sh" />
+          <meta
+            name="og:image"
+            content="https://spaceview.now.sh/images/app-icon.png"
+          />
+          <meta property="og:type" content="website" />
           <meta
             name="viewport"
             content="minimum-scale=1, initial-scale=1, width=device-width"

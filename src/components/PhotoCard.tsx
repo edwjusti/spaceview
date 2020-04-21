@@ -20,7 +20,7 @@ import TodayIcon from '@material-ui/icons/Today';
 import { Photo } from '../api/MarsPhotos';
 import { dateFormatter } from '../util';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   img: {
     height: '100%',
     width: '100%',
@@ -52,7 +52,7 @@ interface Props {
 
 function PhotoCard({ photo }: Props) {
   const classes = useStyles();
-  const [drawerOpen, toggleDrawer] = useReducer((v) => !v, false);
+  const [drawerOpen, toggleDrawer] = useReducer(v => !v, false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {

@@ -30,7 +30,7 @@ import PhotoCard from '../../src/components/PhotoCard';
 import { capitalize } from '../../src/util';
 import Head from 'next/head';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     maxWidth: '95%',
     margin: '0 auto',
@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme) => ({
 interface Props {
   photos?: Photo[];
   rover?: Rover;
+  statusCode?: number;
   error?: boolean;
 }
 
@@ -157,11 +158,11 @@ function FilterDialog({ onClose, open, rover }: Props & DialogProps) {
           <Select
             name="camera"
             value={camera ?? ''}
-            onChange={(event) => setCamera(event.target.value as CameraType)}>
+            onChange={event => setCamera(event.target.value as CameraType)}>
             <MenuItem value={null}>
               <em>All</em>
             </MenuItem>
-            {rover.cameras.map((camera) => (
+            {rover.cameras.map(camera => (
               <MenuItem
                 key={camera.name}
                 value={CameraType[camera.name.toUpperCase()]}>
@@ -173,18 +174,25 @@ function FilterDialog({ onClose, open, rover }: Props & DialogProps) {
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose({}, 'backdropClick')}>Cancel</Button>
-        <Button onClick={onSubmit}>Submit</Button>
+        <Button onClick={onSubmit} disabled={sol.error || page.error}>
+          Submit
+        </Button>
       </DialogActions>
     </Dialog>
   );
 }
 
-const Photos: NextPage<Props> = ({ photos, rover, error }) => {
+const Photos: NextPage<Props> = ({
+  photos,
+  rover,
+  error,
+  statusCode = 500,
+}) => {
   const classes = useStyles();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   return error ? (
-    <Error statusCode={400} />
+    <Error statusCode={statusCode} />
   ) : (
     <Grid className={classes.root} container spacing={1}>
       <Head>
@@ -211,7 +219,7 @@ const Photos: NextPage<Props> = ({ photos, rover, error }) => {
           </Typography>
         </Grid>
       )}
-      {photos.map((photo) => (
+      {photos.map(photo => (
         <Grid key={photo.id} item xl={2} lg={2} xs={4} sm={3}>
           <PhotoCard photo={photo} />
         </Grid>
@@ -229,14 +237,12 @@ Photos.getInitialProps = async ({ query, res }) => {
   const sol = parseInt((query.sol ?? '1') as string);
   const camera = CameraType[cameraName?.toUpperCase()];
 
-  if (rover == undefined) {
-    if (res) {
-      res.writeHead(302, { Location: '/not-found' });
-    } else {
-      Router.replace('/not-found');
-    }
+  res?.setHeader('Cache-Control', 's-maxage=86400');
 
-    return { error: true };
+  if (rover == undefined) {
+    if (res) res.statusCode = 404;
+
+    return { error: true, statusCode: 404 };
   }
 
   const [roverInfo, roverPhotos] = await Promise.all([
@@ -249,7 +255,7 @@ Photos.getInitialProps = async ({ query, res }) => {
   ]);
   const error = roverInfo.error || roverPhotos.error;
 
-  if (error && res) res.statusCode = 400;
+  if (error && res) res.statusCode = 500;
 
   return {
     rover: roverInfo.rover,
