@@ -54,6 +54,7 @@ function PhotoCard({ photo }: Props) {
   const classes = useStyles();
   const [drawerOpen, toggleDrawer] = useReducer(v => !v, false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const imageSrc = photo.img_src.replace('http:', 'https:');
 
   useEffect(() => {
     setDialogOpen(window.location.hash === `#${photo.id}`);
@@ -83,7 +84,7 @@ function PhotoCard({ photo }: Props) {
         onClick={openDialog}
         height="300"
         width="300"
-        src={photo.img_src}
+        src={imageSrc}
         className={classes.img}
       />
       <Dialog
@@ -147,7 +148,7 @@ function PhotoCard({ photo }: Props) {
             </ListItem>
           </List>
         </Drawer>
-        <img src={photo.img_src} className={classes.fullImg} />
+        <img src={imageSrc} className={classes.fullImg} />
       </Dialog>
     </Fragment>
   );
