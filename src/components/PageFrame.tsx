@@ -5,12 +5,15 @@ import {
   Typography,
   makeStyles,
   LinearProgress,
+  IconButton,
 } from '@material-ui/core';
+import GitHubIcon from '@material-ui/icons/GitHub';
 import LinkWrapper from './LinkWrapper';
 import { Router } from 'next/router';
 
 const useStyles = makeStyles(theme => ({
   title: {
+    marginRight: 'auto',
     fontFamily: 'Teko',
     fontWeight: 'bold',
     position: 'relative',
@@ -99,6 +102,12 @@ const PageFrame: React.FC = ({ children }) => {
             variant="h6">
             Spaceview
           </Typography>
+          <IconButton
+            component="a"
+            href="https://github.com/edwjusti/spaceview"
+            color="inherit">
+            <GitHubIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
       {React.Children.only(children)}
