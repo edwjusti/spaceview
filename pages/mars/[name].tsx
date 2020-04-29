@@ -10,7 +10,6 @@ import {
 import {
   Typography,
   Grid,
-  makeStyles,
   Button,
   Dialog,
   DialogTitle,
@@ -23,6 +22,7 @@ import {
   InputLabel,
   DialogActions,
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import FilterIcon from '@material-ui/icons/FilterList';
 import Router from 'next/router';
 import Error from 'next/error';

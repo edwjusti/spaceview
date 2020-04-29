@@ -4,7 +4,6 @@ import Error from 'next/error';
 import SwipeableViews from 'react-swipeable-views';
 import { useState } from 'react';
 import {
-  makeStyles,
   MobileStepper,
   Button,
   Typography,
@@ -13,6 +12,7 @@ import {
   FormControlLabel,
   Radio,
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import { useRouter } from 'next/router';
@@ -70,6 +70,9 @@ const Epic: NextPage<Photos & ResponseProps> = ({
     <div className={classes.root}>
       <Head>
         <title>Spaceview | EPIC</title>
+        {!!photos.length && (
+          <link rel="preload" href={photos[0].image_src} as="image" />
+        )}
       </Head>
       <Box
         paddingX="10px"
@@ -81,17 +84,18 @@ const Epic: NextPage<Photos & ResponseProps> = ({
         <Typography variant="h4">EPIC</Typography>
         <RadioGroup
           row
-          onChange={(_, color) =>
+          onChange={(_, color) => {
+            setActiveStep(0);
             router.replace({
               pathname: '/epic',
               query: {
                 color,
               },
-            })
-          }
+            });
+          }}
           aria-label="position"
           name="position"
-          defaultValue={defaultColor}>
+          value={defaultColor}>
           <FormControlLabel
             value="natural"
             control={<Radio color="secondary" />}
@@ -110,6 +114,15 @@ const Epic: NextPage<Photos & ResponseProps> = ({
         enableMouseEvents>
         {photos.map(metadata => (
           <img
+            loading="lazy"
+            height={600}
+            width={600}
+            style={{
+              background: [
+                `center / contain no-repeat url(${metadata.thumbnail_src})`,
+                'linear-gradient(black, black)',
+              ].join(','),
+            }}
             className={classes.img}
             key={metadata.identifier}
             src={metadata.image_src}

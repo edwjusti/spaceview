@@ -1,12 +1,6 @@
 import React, { Fragment } from 'react';
-import {
-  makeStyles,
-  Typography,
-  Link,
-  IconButton,
-  Grid,
-  Button,
-} from '@material-ui/core';
+import { Typography, Link, IconButton, Grid, Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import LinkWrapper from '../src/components/LinkWrapper';
 

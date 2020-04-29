@@ -73,6 +73,7 @@ export interface Metadata {
   caption: string;
   image: string;
   image_src: string;
+  thumbnail_src: string;
   version: string;
   centroid_coordinates: CentroidCoordinates;
   dscovr_j2000_position: DscovrJ2000Position;
@@ -112,20 +113,22 @@ export class EpicImagery {
   imageSrc(
     color: Color,
     metadata: Metadata,
-    type: 'png' | 'jpg' | 'thumbs' = 'png'
+    type: 'png' | 'jpg' | 'thumbs' = 'jpg',
+    ext = type === 'thumbs' ? 'jpg' : type
   ) {
     const date = metadata.date.split(' ')[0].replace(/-/g, '/');
-    return `https://api.nasa.gov/EPIC/archive/${color}/${date}/${type}/${metadata.image}.${type}?api_key=${this.api_key}`;
+    return `https://api.nasa.gov/EPIC/archive/${color}/${date}/${type}/${metadata.image}.${ext}?api_key=${this.api_key}`;
   }
 
   async recent(color: Color): Promise<Photos> {
     try {
-      const photos = await fetchResource(
+      const photos: Metadata[] = await fetchResource(
         `${this.endpoint}/${color}?api_key=${this.api_key}`
       );
 
       for (const metadata of photos ?? []) {
         metadata.image_src = this.imageSrc(color, metadata);
+        metadata.thumbnail_src = this.imageSrc(color, metadata, 'thumbs');
       }
 
       return { error: false, photos };
@@ -150,12 +153,13 @@ export class EpicImagery {
 
   async date(color: Color, date: string): Promise<Photos> {
     try {
-      const photos = await fetchResource(
+      const photos: Metadata[] = await fetchResource(
         `${this.endpoint}/${color}/date/${date}?api_key=${this.api_key}`
       );
 
       for (const metadata of photos ?? []) {
         metadata.image_src = this.imageSrc(color, metadata);
+        metadata.thumbnail_src = this.imageSrc(color, metadata, 'thumbs');
       }
 
       return { error: false, photos };

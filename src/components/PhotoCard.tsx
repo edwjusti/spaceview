@@ -1,6 +1,5 @@
 import React, { Fragment, useReducer, useEffect, useState } from 'react';
 import {
-  makeStyles,
   Dialog,
   AppBar,
   Toolbar,
@@ -12,6 +11,7 @@ import {
   ListItem,
   Typography,
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import BackIcon from '@material-ui/icons/ArrowBack';
 import CloseIcon from '@material-ui/icons/Close';
 import InfoIcon from '@material-ui/icons/InfoOutlined';
@@ -82,8 +82,9 @@ function PhotoCard({ photo }: Props) {
     <Fragment>
       <img
         onClick={openDialog}
-        height="300"
-        width="300"
+        height={300}
+        width={300}
+        loading="lazy"
         src={imageSrc}
         className={classes.img}
       />

@@ -8,8 +8,12 @@ const {
 } = process.env;
 
 module.exports = {
+  typescript: {
+    ignoreDevErrors: true,
+  },
   experimental: {
     modern: true,
+    reactRefresh: true,
   },
   env,
 };
