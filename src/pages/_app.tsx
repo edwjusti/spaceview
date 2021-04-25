@@ -9,8 +9,9 @@ import PageFrame from '../components/PageFrame';
 export default class MyApp extends App {
   componentDidMount() {
     const jssStyles = document.querySelector('#jss-server-side');
+
     if (jssStyles) {
-      jssStyles.parentElement.removeChild(jssStyles);
+      jssStyles.remove();
     }
   }
 
