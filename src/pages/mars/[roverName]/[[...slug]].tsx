@@ -77,6 +77,7 @@ export const getStaticProps: GetStaticProps<Props, RouteParams> = async ({
       rover: roverInfo.rover,
       photos: roverPhotos.photos ?? [],
     },
+    revalidate: 60 * 60 * 24,
   };
 };
 
