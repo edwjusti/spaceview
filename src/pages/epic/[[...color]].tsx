@@ -1,6 +1,5 @@
-import { NextPage } from 'next';
-import { Photos, EpicImagery, Color } from '../src/api/epic';
-import Error from 'next/error';
+import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import { PhotoList, EpicImagery, Color } from '../../api/epic';
 import SwipeableViews from 'react-swipeable-views';
 import { useState } from 'react';
 import {
@@ -18,6 +17,41 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
+type PageParams = { color?: Color[] };
+
+export const getStaticPaths: GetStaticPaths<PageParams> = async () => ({
+  paths: [
+    {
+      params: {
+        color: ['enhanced'],
+      },
+    },
+    {
+      params: {
+        color: ['natural'],
+      },
+    },
+  ],
+  fallback: 'blocking',
+});
+
+export const getStaticProps: GetStaticProps<PhotoList, PageParams> = async ({
+  params,
+}) => {
+  const { color = ['natural'] } = params ?? {};
+  const epicImagery = new EpicImagery();
+  const photoList = await epicImagery.recent(color[0]);
+
+  if (!photoList.photos)
+    return {
+      notFound: true,
+    };
+
+  return {
+    props: photoList,
+    revalidate: 60 * 60 * 24, // Once a day
+  };
+};
 const cardHeight = 'calc(100vh - 190px)';
 const useStyles = makeStyles({
   root: {
@@ -35,38 +69,26 @@ const useStyles = makeStyles({
   },
 });
 
-interface ResponseProps {
-  statusCode?: number;
-}
-
-const Epic: NextPage<Photos & ResponseProps> = ({
-  photos = [],
-  error,
-  statusCode = 500,
-}) => {
+const Epic: NextPage<PhotoList> = ({ photos = [] }) => {
   const classes = useStyles();
   const router = useRouter();
   const [activeStep, setActiveStep] = useState(0);
   const maxSteps = photos?.length ?? 0;
-  const defaultColor = (
-    (router?.query?.color as string) ?? 'natural'
-  ).toLowerCase();
+  const defaultColor = ((router?.query?.color as string[]) ?? ['natural'])[0];
 
   const handleNext = () => {
-    setActiveStep(prevActiveStep => prevActiveStep + 1);
+    setActiveStep(activeStep + 1);
   };
 
   const handleBack = () => {
-    setActiveStep(prevActiveStep => prevActiveStep - 1);
+    setActiveStep(activeStep - 1);
   };
 
   const handleStepChange = (step: number) => {
     setActiveStep(step);
   };
 
-  return error ? (
-    <Error statusCode={statusCode} />
-  ) : (
+  return (
     <div className={classes.root}>
       <Head>
         <title>Spaceview | EPIC</title>
@@ -87,10 +109,7 @@ const Epic: NextPage<Photos & ResponseProps> = ({
           onChange={(_, color) => {
             setActiveStep(0);
             router.replace({
-              pathname: '/epic',
-              query: {
-                color,
-              },
+              pathname: `/epic/${color}`,
             });
           }}
           aria-label="position"
@@ -152,26 +171,6 @@ const Epic: NextPage<Photos & ResponseProps> = ({
       />
     </div>
   );
-};
-
-Epic.getInitialProps = async ({ query, res }) => {
-  const epicImagery = new EpicImagery();
-  const colorKey = (query.color as string)?.toUpperCase();
-  const color: Color = Color[colorKey || 'NATURAL'];
-
-  res?.setHeader('Cache-Control', 's-maxage=86400');
-
-  if (!color) {
-    if (res) res.statusCode = 404;
-
-    return { error: true, statusCode: 404 };
-  }
-
-  const response = await epicImagery.recent(color);
-
-  if (response.error && res) res.statusCode = 500;
-
-  return response;
 };
 
 export default Epic;

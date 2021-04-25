@@ -84,7 +84,7 @@ export interface Metadata {
   coords: Coords;
 }
 
-export interface Photos {
+export interface PhotoList {
   photos?: Metadata[];
   error: boolean;
 }
@@ -98,10 +98,7 @@ export interface Dates {
   error: boolean;
 }
 
-export enum Color {
-  ENHANCED = 'enhanced',
-  NATURAL = 'natural',
-}
+export type Color = 'enhanced' | 'natural';
 
 export class EpicImagery {
   readonly endpoint = 'https://api.nasa.gov/EPIC/api';
@@ -120,7 +117,7 @@ export class EpicImagery {
     return `https://api.nasa.gov/EPIC/archive/${color}/${date}/${type}/${metadata.image}.${ext}?api_key=${this.api_key}`;
   }
 
-  async recent(color: Color): Promise<Photos> {
+  async recent(color: Color): Promise<PhotoList> {
     try {
       const photos: Metadata[] = await fetchResource(
         `${this.endpoint}/${color}?api_key=${this.api_key}`
@@ -151,7 +148,7 @@ export class EpicImagery {
     }
   }
 
-  async date(color: Color, date: string): Promise<Photos> {
+  async date(color: Color, date: string): Promise<PhotoList> {
     try {
       const photos: Metadata[] = await fetchResource(
         `${this.endpoint}/${color}/date/${date}?api_key=${this.api_key}`

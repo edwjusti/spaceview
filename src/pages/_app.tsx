@@ -3,8 +3,8 @@ import App from 'next/app';
 import Head from 'next/head';
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import theme from '../src/theme';
-import PageFrame from '../src/components/PageFrame';
+import theme from '../theme';
+import PageFrame from '../components/PageFrame';
 
 export default class MyApp extends App {
   componentDidMount() {

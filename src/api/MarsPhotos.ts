@@ -1,9 +1,10 @@
 import fetchResource from './fetchResource';
 
 export enum RoverType {
-  CURIOSITY,
-  OPPORTUNITY,
-  SPIRIT,
+  CURIOSITY = 'curiosity',
+  OPPORTUNITY = 'opportunity',
+  SPIRIT = 'spirit',
+  PERSEVERANCE = 'perseverance',
 }
 
 export enum CameraType {
@@ -76,6 +77,7 @@ export const roverThumbnails = {
   [RoverType.CURIOSITY]: '/images/curiosity.png',
   [RoverType.OPPORTUNITY]: '/images/opportunity.jpg',
   [RoverType.SPIRIT]: '/images/spirit.jpg',
+  [RoverType.PERSEVERANCE]: '/images/perseverance.jpg',
 };
 
 export class MarsPhotos {
@@ -86,7 +88,6 @@ export class MarsPhotos {
   ) {}
 
   async photos(rover: RoverType, opts: RoversQuery = {}): Promise<RoverPhotos> {
-    const roverName = RoverType[rover] as string;
     let query = `?api_key=${this.api_key}`;
 
     for (const [key, value] of Object.entries(opts)) {
@@ -97,7 +98,7 @@ export class MarsPhotos {
 
     try {
       const response = await fetchResource(
-        `${this.endpoint}/rovers/${roverName}/photos${query}`
+        `${this.endpoint}/rovers/${rover}/photos${query}`
       );
 
       return { error: false, ...response };
@@ -108,11 +109,9 @@ export class MarsPhotos {
   }
 
   async latest_photos(rover: RoverType): Promise<RoverPhotos> {
-    const roverName = RoverType[rover] as string;
-
     try {
       const response = await fetchResource(
-        `${this.endpoint}/rovers/${roverName}/latest_photos?api_key=${this.api_key}`
+        `${this.endpoint}/rovers/${rover}/latest_photos?api_key=${this.api_key}`
       );
 
       return { error: false, ...response };
@@ -136,11 +135,9 @@ export class MarsPhotos {
   }
 
   async rover(rover: RoverType): Promise<RoverInfo> {
-    const roverName = RoverType[rover] as string;
-
     try {
       const response = await fetchResource(
-        `${this.endpoint}/rovers/${roverName}?api_key=${this.api_key}`
+        `${this.endpoint}/rovers/${rover}?api_key=${this.api_key}`
       );
 
       return { error: false, ...response };

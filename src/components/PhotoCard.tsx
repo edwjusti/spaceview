@@ -24,6 +24,8 @@ const useStyles = makeStyles(theme => ({
   img: {
     height: '100%',
     width: '100%',
+    objectFit: 'cover',
+    aspectRatio: '1 / 1',
     background: theme.palette.background.paper,
   },
   fullImg: {

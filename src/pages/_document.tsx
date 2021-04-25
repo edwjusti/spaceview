@@ -1,7 +1,7 @@
 import React from 'react';
-import Document, { Head, Main, NextScript } from 'next/document';
+import Document, { Head, Html, Main, NextScript } from 'next/document';
 import { ServerStyleSheets } from '@material-ui/core/styles';
-import theme from '../src/theme';
+import theme from '../theme';
 import CleanCSS from 'clean-css';
 
 const PRODUCTION = process.env.NODE_ENV === 'production';
@@ -14,7 +14,7 @@ const cleanCSS = PRODUCTION
 export default class MyDocument extends Document {
   render() {
     return (
-      <html lang="en">
+      <Html lang="en">
         <Head>
           <meta name="theme-color" content={theme.palette.primary.main} />
           <meta name="mobile-web-app-capable" content="yes" />
@@ -34,7 +34,7 @@ export default class MyDocument extends Document {
           <Main />
           <NextScript />
         </body>
-      </html>
+      </Html>
     );
   }
 }
@@ -75,7 +75,7 @@ MyDocument.getInitialProps = async ctx => {
 
   let css = sheets.toString();
 
-  if (PRODUCTION) css = cleanCSS.minify(sheets.toString()).styles;
+  if (cleanCSS) css = cleanCSS.minify(sheets.toString()).styles;
 
   return {
     ...initialProps,
