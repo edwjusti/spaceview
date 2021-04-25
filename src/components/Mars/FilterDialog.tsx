@@ -13,7 +13,7 @@ import {
   TextField,
 } from '@material-ui/core';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { CameraType, Photo, Rover } from '../../api/MarsPhotos';
 import useNumberInput from '../../hooks/useNumberInput';
 
@@ -35,7 +35,18 @@ const FilterDialog: React.FC<Props> = ({ onClose, open, rover }) => {
   const page = useNumberInput(1, 1);
   const [camera, setCamera] = useState<CameraType>();
   const router = useRouter();
-  const onSubmit = (ev: React.SyntheticEvent) => {
+  const handleChange = useCallback(
+    (
+      event: React.ChangeEvent<{
+        value: unknown;
+        name?: string;
+      }>
+    ) => {
+      setCamera(event.target.value as CameraType);
+    },
+    []
+  );
+  const handleSubmit = useCallback((ev: React.SyntheticEvent) => {
     ev.preventDefault();
 
     const slug = [page.value.toString(), sol.value.toString()];
@@ -46,7 +57,7 @@ const FilterDialog: React.FC<Props> = ({ onClose, open, rover }) => {
 
     onClose?.({}, 'backdropClick');
     router.push(`/mars/${rover.name}/${slug.join('/')}`);
-  };
+  }, []);
 
   return (
     <Dialog
@@ -54,7 +65,7 @@ const FilterDialog: React.FC<Props> = ({ onClose, open, rover }) => {
       maxWidth="xs"
       PaperProps={{
         component: 'form',
-        onSubmit,
+        onSubmit: handleSubmit,
       }}
       keepMounted
       open={open}
@@ -79,10 +90,7 @@ const FilterDialog: React.FC<Props> = ({ onClose, open, rover }) => {
         />
         <FormControl className={classes.formControl}>
           <InputLabel>Camera</InputLabel>
-          <Select
-            name="camera"
-            value={camera ?? ''}
-            onChange={event => setCamera(event.target.value as CameraType)}>
+          <Select name="camera" value={camera ?? ''} onChange={handleChange}>
             <MenuItem>
               <em>All</em>
             </MenuItem>
@@ -102,7 +110,7 @@ const FilterDialog: React.FC<Props> = ({ onClose, open, rover }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose?.({}, 'backdropClick')}>Cancel</Button>
-        <Button onClick={onSubmit} disabled={sol.error || page.error}>
+        <Button onClick={handleSubmit} disabled={sol.error || page.error}>
           Submit
         </Button>
       </DialogActions>

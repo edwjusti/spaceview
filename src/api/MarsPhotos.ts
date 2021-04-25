@@ -17,6 +17,23 @@ export enum CameraType {
   NAVCAM = 'navcam',
   PANCAM = 'pancam',
   MINITES = 'minites',
+  EDL_RUCAM = 'edl_rucam',
+  EDL_DDCAM = 'edl_ddcam',
+  EDL_PUCAM1 = 'edl_pucam1',
+  EDL_PUCAM2 = 'edl_pucam2',
+  NAVCAM_LEFT = 'navcam_left',
+  NAVCAM_RIGHT = 'navcam_right',
+  MCZ_RIGHT = 'mcz_right',
+  MCZ_LEFT = 'mcz_left',
+  FRONT_HAZCAM_LEFT_A = 'front_hazcam_left_a',
+  FRONT_HAZCAM_RIGHT_A = 'front_hazcam_right_a',
+  REAR_HAZCAM_LEFT = 'rear_hazcam_left',
+  REAR_HAZCAM_RIGHT = 'rear_hazcam_right',
+  EDL_RDCAM = 'edl_rdcam',
+  SKYCAM = 'skycam',
+  SHERLOC_WATSON = 'sherloc_watson',
+  SUPERCAM_RMI = 'supercam_rmi',
+  LCAM = 'lcam',
 }
 
 export interface PhotoCamera {
