@@ -13,9 +13,9 @@ import {
   TextField,
 } from '@material-ui/core';
 import { useRouter } from 'next/router';
-import React, { useCallback, useState } from 'react';
+import { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { CameraType, Photo, Rover } from '../../api/MarsPhotos';
-import useNumberInput from '../../hooks/useNumberInput';
 
 interface Props extends DialogProps {
   photos: Photo[];
@@ -31,33 +31,27 @@ const useStyles = makeStyles(theme => ({
 
 const FilterDialog: React.FC<Props> = ({ onClose, open, rover }) => {
   const classes = useStyles();
-  const sol = useNumberInput(1, 1, rover.max_sol);
-  const page = useNumberInput(1, 1);
-  const [camera, setCamera] = useState<CameraType>();
   const router = useRouter();
-  const handleChange = useCallback(
-    (
-      event: React.ChangeEvent<{
-        value: unknown;
-        name?: string;
-      }>
-    ) => {
-      setCamera(event.target.value as CameraType);
+  const { handleSubmit, register, errors, control, reset } = useForm({
+    defaultValues: {
+      page: 1,
+      sol: 1,
+      camera: '',
     },
-    []
-  );
-  const handleSubmit = useCallback((ev: React.SyntheticEvent) => {
-    ev.preventDefault();
+  });
 
-    const slug = [page.value.toString(), sol.value.toString()];
+  useEffect(() => {
+    if (router.isReady) {
+      const [pageString = '1', solString = '1', camera = ''] =
+        (router.query.slug as string[]) ?? [];
 
-    if (camera) {
-      slug.push(camera);
+      reset({
+        page: parseInt(pageString),
+        sol: parseInt(solString),
+        camera,
+      });
     }
-
-    onClose?.({}, 'backdropClick');
-    router.push(`/mars/${rover.name}/${slug.join('/')}`);
-  }, []);
+  }, [router.isReady]);
 
   return (
     <Dialog
@@ -65,7 +59,18 @@ const FilterDialog: React.FC<Props> = ({ onClose, open, rover }) => {
       maxWidth="xs"
       PaperProps={{
         component: 'form',
-        onSubmit: handleSubmit,
+        // @ts-ignore
+        noValidate: true,
+        onSubmit: handleSubmit(data => {
+          const slug = [data.page.toString(), data.sol.toString()];
+
+          if (data.camera) {
+            slug.push(data.camera);
+          }
+
+          onClose?.({}, 'backdropClick');
+          router.push(`/mars/${rover.name}/${slug.join('/')}`);
+        }),
       }}
       keepMounted
       open={open}
@@ -80,39 +85,71 @@ const FilterDialog: React.FC<Props> = ({ onClose, open, rover }) => {
           className={classes.formControl}
           label="Sol"
           name="sol"
-          {...sol}
+          error={!!errors.sol}
+          helperText={errors.sol?.message}
+          inputRef={register({
+            required: {
+              value: true,
+              message: 'Sol is required',
+            },
+            min: {
+              value: 1,
+              message: 'Sol cannot be lower than 1',
+            },
+            max: {
+              value: rover.max_sol,
+              message: `Sol must be lower than ${rover.max_sol}`,
+            },
+            valueAsNumber: true,
+          })}
         />
         <TextField
           className={classes.formControl}
           label="Page"
           name="page"
-          {...page}
+          error={!!errors.page}
+          helperText={errors.page?.message}
+          inputRef={register({
+            required: {
+              value: true,
+              message: 'Page is required',
+            },
+            min: {
+              value: 1,
+              message: 'Page cannot be lower than 1',
+            },
+            valueAsNumber: true,
+          })}
         />
         <FormControl className={classes.formControl}>
           <InputLabel>Camera</InputLabel>
-          <Select name="camera" value={camera ?? ''} onChange={handleChange}>
-            <MenuItem>
-              <em>All</em>
-            </MenuItem>
-            {rover.cameras.map(camera => (
-              <MenuItem
-                key={camera.name}
-                value={
-                  CameraType[
-                    camera.name.toUpperCase() as keyof typeof CameraType
-                  ]
-                }>
-                {camera.full_name}
-              </MenuItem>
-            ))}
-          </Select>
+          <Controller
+            name="camera"
+            control={control}
+            as={
+              <Select name="camera">
+                <MenuItem>
+                  <em>All</em>
+                </MenuItem>
+                {rover.cameras.map(camera => (
+                  <MenuItem
+                    key={camera.name}
+                    value={
+                      CameraType[
+                        camera.name.toUpperCase() as keyof typeof CameraType
+                      ]
+                    }>
+                    {camera.full_name}
+                  </MenuItem>
+                ))}
+              </Select>
+            }
+          />
         </FormControl>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose?.({}, 'backdropClick')}>Cancel</Button>
-        <Button onClick={handleSubmit} disabled={sol.error || page.error}>
-          Submit
-        </Button>
+        <Button type="submit">Submit</Button>
       </DialogActions>
     </Dialog>
   );

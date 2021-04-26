@@ -50,10 +50,7 @@
     "arrow-spacing": "error",
     "linebreak-style": 0,
     "no-warning-comments": "warn",
-    "quotes": [
-      "error",
-      "single"
-    ],
+    "quotes": "off",
     "semi": [
       "error",
       "always"

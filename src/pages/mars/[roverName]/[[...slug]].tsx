@@ -12,7 +12,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import FilterIcon from '@material-ui/icons/FilterList';
 import PhotoCard from '../../../components/PhotoCard';
 import Head from 'next/head';
-import FilterDialog from '../../../components/Mars/FilterDialog';
+import dynamic from 'next/dynamic';
 
 interface Props {
   photos: Photo[];
@@ -89,6 +89,11 @@ const useStyles = makeStyles(() => ({
     height: 80,
   },
 }));
+
+const FilterDialog = dynamic(
+  () => import('../../../components/Mars/FilterDialog'),
+  { ssr: false }
+);
 
 const Photos: React.FC<Props> = ({ photos, rover }) => {
   const classes = useStyles();
